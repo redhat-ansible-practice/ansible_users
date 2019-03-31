@@ -1,0 +1,56 @@
+---
+# tasks file for users
+
+- name: create user groups
+  group:
+    name: "{{ item }}"
+  loop:
+    - postgresql
+    - nginx-test
+    - admin
+    - dbadmin
+    - hadoop
+
+- name: all users in the department
+  user:
+    name: "{{ item }}"
+    group: wheel
+    groups: wheel
+    state: present
+  loop:
+    - user1
+    - user2
+    - user3
+    - user4
+    - user5
+    - user6
+    - user7
+    - user8
+    - user9
+    - user10
+
+- name: all users in the department
+  user:
+    name:  "{{ item.name }}"
+    group: "{{ item.group }}"
+    groups: "{{ item.groups }}"
+    uid: "{{ item.uid }}"
+    state: "{{ item.state }}"
+  loop:
+    - { name: 'admin1', group: 'admin', groups: 'nginx', uid: '1234', state: present }
+    - { name: 'dbadmin1', group: 'dbadmin', groups: 'postgres', uid: '4321', state: present }
+    - { name: 'user1', group: 'hadoop', groups: 'wheel', uid: '1067', state: present }
+    - { name: 'jose', group: 'admin', groups: 'wheel', uid: '9000', state: absent}
+
+- name: copy over all the users public keys
+  authorized_key:
+    user: "{{ item.user }}"
+    key: "{{ item.key }}"
+    state: "{{ item.state }}"
+    comment: "{{ item.comment }}"
+  loop:
+    #- { user: 'admin1', key: "{{ lookup('file', '/data/vm_temp_key.pub') }}", state: 'present', comment: 'admin1 key' }
+    - { user: 'dbadmin1', key: 'vm_temp_key', state: 'present', comment: 'dbadmin key' }
+
+
+
